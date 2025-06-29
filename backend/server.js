@@ -104,6 +104,18 @@ async function run() {
       res.send(result);
     })
 
+    // Delete an event
+    app.delete('/delete-event', async (req, res) => {
+      const {id} = req.query;
+      
+      console.log(id);
+      const filter = {_id: new ObjectId(id)};
+
+      const result = await eventsCollection.deleteOne(filter);
+
+      res.send(result);
+    })
+
     // Signup new user
     app.post('/register', async (req, res) => {
       const { name, email, password, photoURL } = req.body;

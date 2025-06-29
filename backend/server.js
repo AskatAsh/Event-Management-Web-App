@@ -9,7 +9,8 @@ const uri = "mongodb+srv://mongodb:learning_backend_mongodb@cluster01.d7f8blu.mo
 const app = express();
 app.use(express.json());
 app.use(cors());
-const port = process.env.PORT || 5000;
+// const port = process.env.PORT || 5000;
+const port = 5000;
 
 
 // Create a MongoClient with a MongoClientOptions object to set the Stable API version
@@ -164,6 +165,59 @@ async function run() {
           error: error.message
         })
       }
+    })
+
+    // Join event
+    app.post('/join-event/:eventId', async (req, res) => {
+      try {
+        const { eventId } = req.params;
+        const { userId } = req.body;
+
+        if (!eventId) {
+          return res.status(400).json({
+            success: false,
+            message: 'Event ID is required in URL params.'
+          });
+        }
+
+        const event = await eventsCollection.findOne({ _id: new ObjectId(eventId) });
+
+        if (!event) {
+          return res.status(400).json({
+            success: false,
+            message: 'Event not found.'
+          });
+        }
+
+        if (event.joinedUsers && event.joinedUsers.includes(userId)) {
+          return res.status(400).json({
+            success: false,
+            message: 'User has already joined this event'
+          });
+        }
+
+        const result = await eventsCollection.updateOne(
+          { _id: new ObjectId(eventId) },
+          {
+            $addToSet: { joinedUsers: userId },
+            $inc: { attendeeCount: 1 }
+          }
+        )
+
+        res.status(200).json({
+          success: true,
+          message: 'Successfully joined the event',
+          ...result
+        });
+      } catch (error) {
+        // console.error('Error joining event:', error);
+        res.status(500).json({
+          success: false,
+          message: "Internal server error while joining event.",
+          error: error.message
+        })
+      }
+
     })
 
     // Get events added by user

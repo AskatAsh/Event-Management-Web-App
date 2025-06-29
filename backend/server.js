@@ -79,6 +79,17 @@ async function run() {
       res.send(result);
     })
 
+    // Get events added by user
+    app.get('/my-events/:id', async (req, res) => {
+      const {id} = req.params;
+
+      const filter = {userId: id};
+
+      const result = await eventsCollection.find(filter).toArray();
+
+      res.send(result);
+    })
+
     // Update an event
     app.put('/update-event/:id', async (req, res) => {
       const { id } = req.params;
@@ -107,7 +118,7 @@ async function run() {
     // Delete an event
     app.delete('/delete-event', async (req, res) => {
       const {id} = req.query;
-      
+
       console.log(id);
       const filter = {_id: new ObjectId(id)};
 

@@ -294,30 +294,52 @@ async function run() {
 
     // Signup new user
     app.post('/register', async (req, res) => {
-      const { name, email, password, photoURL } = req.body;
+      try {
+        const { name, email, password, photoURL } = req.body;
 
-      // check for existing user with email
-      const existingUser = await usersCollection.findOne({ email: email });
-      if (existingUser) {
-        return res.status(409).json({ message: 'Email already registered! Please Login.' });
+        if (!name || !email || !password || !photoURL) {
+          return res.status(400).json({
+            success: false,
+            message: 'All fields (name, email, password, photoURL) are required.'
+          });
+        }
+
+        // check for existing user with email
+        const existingUser = await usersCollection.findOne({ email: email });
+        if (existingUser) {
+          return res.status(409).json({
+            success: false,
+            message: 'Email already registered! Please login instead.'
+          });
+        }
+
+        // hashing password using bcrypt with saltOrRounds
+        const hashedPassword = await bcrypt.hash(password, 10);
+
+        const newUser = {
+          name,
+          email,
+          password: hashedPassword,
+          photoURL,
+          role: 'user',
+          createdAt: new Date()
+        };
+
+        const result = await usersCollection.insertOne(newUser);
+
+        res.status(201).json({
+          success: true,
+          message: "User registered successfully.",
+          ...result
+        });
+      } catch (error) {
+        // console.error('Error registering user:', error);
+        res.status(500).json({
+          success: false,
+          message: "Internal server error while registering user.",
+          error: error.message
+        })
       }
-
-      // hashing password using bcrypt with saltOrRounds
-      const hashedPassword = await bcrypt.hash(password, 10);
-
-      const newUser = {
-        name,
-        email,
-        password: hashedPassword,
-        photoURL,
-        role: 'user',
-        createdAt: new Date()
-      };
-
-      const result = await usersCollection.insertOne(newUser);
-
-      console.log(result);
-      res.send(result);
     })
 
     // Login user

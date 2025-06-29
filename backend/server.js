@@ -344,31 +344,54 @@ async function run() {
 
     // Login user
     app.post('/login', async (req, res) => {
-      const { email, password } = req.body;
+      try {
+        const { email, password } = req.body;
 
-      // check if user exists with given email
-      const user = await usersCollection.findOne({ email: email });
-      if (!user) {
-        return res.status(401).json({ message: 'Invalid email or password.' });
-      }
-
-      // compare passwords
-      const isPasswordMatched = await bcrypt.compare(password, user.password);
-      if (!isPasswordMatched) {
-        return res.status(401).json({ message: 'Invalid email or password.' });
-      }
-
-      // send success message and user info
-      res.json({
-        message: 'Login Successful',
-        user: {
-          name: user.name,
-          email: user.email,
-          photoURL: user.photoURL,
-          role: user.role
+        if (!email || !password) {
+          return res.status(400).json({
+            success: false,
+            message: 'Email and password are required.'
+          });
         }
-      })
 
+        // check if user exists with given email
+        const user = await usersCollection.findOne({ email: email });
+        if (!user) {
+          return res.status(401).json({
+            success: false,
+            message: 'Invalid email or password.'
+          });
+        }
+
+        // compare passwords
+        const isPasswordMatched = await bcrypt.compare(password, user.password);
+        if (!isPasswordMatched) {
+          return res.status(401).json({
+            success: false,
+            message: 'Invalid email or password.'
+          });
+        }
+
+        // send success message and user info
+        res.status(200).json({
+          success: true,
+          message: 'Login Successful',
+          user: {
+            id: user._id,
+            name: user.name,
+            email: user.email,
+            photoURL: user.photoURL,
+            role: user.role
+          }
+        })
+      } catch (error) {
+        // console.error('Error logging user:', error);
+        res.status(500).json({
+          success: false,
+          message: "Internal server error while loggin user.",
+          error: error.message
+        })
+      }
     })
 
     // Send a ping to confirm a successful connection

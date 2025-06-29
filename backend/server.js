@@ -47,10 +47,35 @@ async function run() {
 
     // Search events
     app.get('/events/search', async (req, res) => {
-      const searchTerms = req.query.title;
-      console.log(searchTerms);
-      const result = await eventsCollection.find({ title: { $regex: searchTerms, $options: "i" } }).toArray();
-      res.send(result);
+      try {
+        const searchTerms = req.query.title;
+        if (!searchTerms) {
+          return res.status(400).json({ message: 'Missing search terms. Please write event title in search input.' })
+        }
+
+        const events = await eventsCollection.find({ title: { $regex: searchTerms, $options: "i" } }).toArray();
+
+        if (!events.length) {
+          return res.status(200).json({
+            success: true,
+            message: `No event(s) found.`,
+            data: []
+          });
+        }
+
+        res.status(200).json({
+          success: true,
+          message: `Found ${events.length} event(s).`,
+          data: events
+        });
+      } catch (error) {
+        // console.error('Error fetching recent events:', error);
+        res.status(500).json({
+          success: false,
+          message: "Internal server error while searching events.",
+          error: error.message
+        })
+      }
     })
 
     // Filter events
@@ -83,7 +108,7 @@ async function run() {
           }
         }).sort({ dateTime: -1 }).toArray();
 
-        res.send({
+        res.status(200).json({
           success: true,
           message: `Fetched ${events.length} filtered event(s) successfully.`,
           data: events

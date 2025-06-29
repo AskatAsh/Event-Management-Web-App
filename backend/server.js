@@ -255,15 +255,41 @@ async function run() {
     })
 
     // Delete an event
-    app.delete('/delete-event', async (req, res) => {
-      const { id } = req.query;
+    app.delete('/delete-event/:id', async (req, res) => {
+      try {
+        const { id } = req.params;
 
-      console.log(id);
-      const filter = { _id: new ObjectId(id) };
+        if (!id) {
+          return res.status(400).json({
+            success: false,
+            message: 'Events ID is required in URL params.'
+          });
+        }
 
-      const result = await eventsCollection.deleteOne(filter);
+        const filter = { _id: new ObjectId(id) };
 
-      res.send(result);
+        const result = await eventsCollection.deleteOne(filter);
+
+        if (result.deletedCount === 0) {
+          return res.status(404).json({
+            success: false,
+            message: 'Event not found or already deleted.'
+          });
+        }
+
+        res.status(200).json({
+          success: true,
+          message: "Successfully deleted event.",
+          ...result
+        });
+      } catch (error) {
+        // console.error('Error deleting event:', error);
+        res.status(500).json({
+          success: false,
+          message: "Internal server error while deleting event.",
+          error: error.message
+        })
+      }
     })
 
     // Signup new user

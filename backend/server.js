@@ -9,8 +9,8 @@ const uri = "mongodb+srv://mongodb:learning_backend_mongodb@cluster01.d7f8blu.mo
 const app = express();
 app.use(express.json());
 app.use(cors());
-// const port = process.env.PORT || 5000;
-const port = 5000;
+const port = process.env.PORT || 5000;
+// const port = 5000;
 
 
 // Create a MongoClient with a MongoClientOptions object to set the Stable API version

@@ -179,6 +179,14 @@ async function run() {
 
         const events = await eventsCollection.find(filter).sort({ dateTime: -1 }).toArray();
 
+        if (!events.length) {
+          return res.status(200).json({
+            success: false,
+            message: `No events found. Please login and added new event.`,
+            data: events
+          });
+        }
+
         res.status(200).json({
           success: true,
           message: `Found ${events.length} user added event(s) successfully.`,

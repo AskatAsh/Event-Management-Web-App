@@ -1,4 +1,4 @@
-const { MongoClient, ServerApiVersion } = require('mongodb');
+const { MongoClient, ServerApiVersion, ObjectId } = require('mongodb');
 const express = require('express');
 const { getDateRange } = require('./utils/dateRange');
 const uri = "mongodb+srv://mongodb:learning_backend_mongodb@cluster01.d7f8blu.mongodb.net/eventManagementDB?retryWrites=true&w=majority&appName=Cluster01";
@@ -58,8 +58,8 @@ async function run() {
       res.send(result);
     })
 
-    // Add an events
-    app.post('/add-event', async(req, res) => {
+    // Add an event
+    app.post('/add-event', async (req, res) => {
       const { title, name, dateTime, location, description } = req.body;
 
       const event = {
@@ -73,6 +73,31 @@ async function run() {
       };
 
       const result = await eventsCollection.insertOne(event);
+      console.log(result);
+      res.send(result);
+    })
+
+    // Update an event
+    app.put('/update-event/:id', async (req, res) => {
+      const { id } = req.params;
+      const { title, name, dateTime, location, description, attendeeCount } = req.body;
+
+      const filter = { _id: new ObjectId(id) };
+
+      const updateEvent = {
+        title: title,
+        name: name,
+        dateTime: new Date(dateTime),
+        location: location,
+        description: description,
+        attendeeCount: attendeeCount,
+        updatedAt: new Date()
+      };
+
+      const result = await eventsCollection.updateOne(filter, {
+        $set: updateEvent
+      }, { upsert: true });
+
       console.log(result);
       res.send(result);
     })

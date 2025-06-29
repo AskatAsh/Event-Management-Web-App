@@ -4,6 +4,7 @@ const { getDateRange } = require('./utils/dateRange');
 const uri = "mongodb+srv://mongodb:learning_backend_mongodb@cluster01.d7f8blu.mongodb.net/eventManagementDB?retryWrites=true&w=majority&appName=Cluster01";
 
 const app = express();
+app.use(express.json());
 const port = process.env.PORT || 5000;
 
 
@@ -23,12 +24,14 @@ async function run() {
 
     const eventsCollection = client.db("eventManagementDB").collection("events");
 
+    // GET recent events
     app.get('/events', async (req, res) => {
       const result = await eventsCollection.find({}).sort({ "dateTime": -1 }).limit(3).toArray();
       console.log(result);
       res.send(result);
     })
 
+    // Search events
     app.get('/events/search', async (req, res) => {
       const searchTerms = req.query.title;
       console.log(searchTerms);
@@ -36,6 +39,7 @@ async function run() {
       res.send(result);
     })
 
+    // Filter events
     app.get('/events/filter', async (req, res) => {
       const { filterType } = req.query;
       console.log(filterType);
@@ -54,6 +58,24 @@ async function run() {
       res.send(result);
     })
 
+    // Add an events
+    app.post('/add-event', async(req, res) => {
+      const { title, name, dateTime, location, description } = req.body;
+
+      const event = {
+        title,
+        name,
+        dateTime: new Date(dateTime),
+        location,
+        description,
+        attendeeCount: 0,
+        createdAt: new Date()
+      };
+
+      const result = await eventsCollection.insertOne(event);
+      console.log(result);
+      res.send(result);
+    })
 
     // Send a ping to confirm a successful connection
     // await client.db("admin").command({ ping: 1 });

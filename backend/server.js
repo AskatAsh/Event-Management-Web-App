@@ -1,5 +1,6 @@
 const { MongoClient, ServerApiVersion } = require('mongodb');
 const express = require('express');
+const { getDateRange } = require('./utils/dateRange');
 const uri = "mongodb+srv://mongodb:learning_backend_mongodb@cluster01.d7f8blu.mongodb.net/eventManagementDB?retryWrites=true&w=majority&appName=Cluster01";
 
 const app = express();
@@ -23,7 +24,7 @@ async function run() {
     const eventsCollection = client.db("eventManagementDB").collection("events");
 
     app.get('/events', async (req, res) => {
-      const result = await eventsCollection.find({}).sort({"dateTime": -1}).limit(3).toArray();
+      const result = await eventsCollection.find({}).sort({ "dateTime": -1 }).limit(3).toArray();
       console.log(result);
       res.send(result);
     })
@@ -31,7 +32,25 @@ async function run() {
     app.get('/events/search', async (req, res) => {
       const searchTerms = req.query.title;
       console.log(searchTerms);
-      const result = await eventsCollection.find({title: {$regex: searchTerms, $options: "i"}}).toArray();
+      const result = await eventsCollection.find({ title: { $regex: searchTerms, $options: "i" } }).toArray();
+      res.send(result);
+    })
+
+    app.get('/events/filter', async (req, res) => {
+      const { filterType } = req.query;
+      console.log(filterType);
+
+      const dateFilter = getDateRange(filterType);
+      const query = {
+        dateTime: { $gte: `${dateFilter.$gte}`, $lte: `${dateFilter.$lte}` }
+      }
+      console.log(query);
+      const result = await eventsCollection.find({
+        dateTime: {
+          $gte: dateFilter.$gte,
+          $lte: dateFilter.$lte
+        }
+      }).sort({ dateTime: -1 }).toArray();
       res.send(result);
     })
 

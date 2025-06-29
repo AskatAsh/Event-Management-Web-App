@@ -125,21 +125,42 @@ async function run() {
 
     // Add an event
     app.post('/add-event', async (req, res) => {
-      const { title, name, dateTime, location, description } = req.body;
+      try {
+        const { title, name, dateTime, location, description } = req.body;
 
-      const event = {
-        title,
-        name,
-        dateTime: new Date(dateTime),
-        location,
-        description,
-        attendeeCount: 0,
-        createdAt: new Date()
-      };
+        if(!title || !name || !dateTime || !location || !description){
+          return res.status(400).json({
+            success: false,
+            message: "Missing input(s). Make sure input fields are not empty."
+          })
+        }
 
-      const result = await eventsCollection.insertOne(event);
-      console.log(result);
-      res.send(result);
+        const event = {
+          title,
+          name,
+          dateTime: new Date(dateTime),
+          location,
+          description,
+          attendeeCount: 0,
+          joinedUsers: [],
+          createdAt: new Date()
+        };
+
+        const result = await eventsCollection.insertOne(event);
+
+        res.status(201).json({
+          success: true,
+          message: "Successfully added a new event.",
+          ...result
+        });
+      } catch (error) {
+        // console.error('Error adding new event:', error);
+        res.status(500).json({
+          success: false,
+          message: "Internal server error while adding new event.",
+          error: error.message
+        })
+      }
     })
 
     // Get events added by user

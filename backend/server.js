@@ -204,27 +204,54 @@ async function run() {
 
     // Update an event
     app.put('/update-event/:id', async (req, res) => {
-      const { id } = req.params;
-      const { title, name, dateTime, location, description, attendeeCount } = req.body;
+      try {
+        const { id } = req.params;
+        if (!id) {
+          return res.status(400).json({
+            success: false,
+            message: 'Events ID is required in URL params.'
+          });
+        }
 
-      const filter = { _id: new ObjectId(id) };
+        const { title, name, dateTime, location, description, attendeeCount } = req.body;
 
-      const updateEvent = {
-        title: title,
-        name: name,
-        dateTime: new Date(dateTime),
-        location: location,
-        description: description,
-        attendeeCount: attendeeCount,
-        updatedAt: new Date()
-      };
+        const updateFields = {};
 
-      const result = await eventsCollection.updateOne(filter, {
-        $set: updateEvent
-      }, { upsert: true });
+        if (title) updateFields.title = title;
+        if (name) updateFields.name = name;
+        if (dateTime) updateFields.dateTime = new Date(dateTime);
+        if (location) updateFields.location = location;
+        if (description) updateFields.description = description;
+        if (typeof attendeeCount === 'number') updateFields.attendeeCount = attendeeCount;
 
-      console.log(result);
-      res.send(result);
+        updateFields.updatedAt = new Date();
+
+        const filter = { _id: new ObjectId(id) };
+
+        const result = await eventsCollection.updateOne(filter, {
+          $set: updateFields
+        });
+
+        if (result.matchedCount === 0) {
+          return res.status(404).json({
+            success: false,
+            message: 'No event found with the provided ID.'
+          });
+        }
+
+        res.status(201).json({
+          success: true,
+          message: "Event updated successfully.",
+          ...result
+        });
+      } catch (error) {
+        // console.error('Error updating event:', error);
+        res.status(500).json({
+          success: false,
+          message: "Internal server error while updating event.",
+          error: error.message
+        })
+      }
     })
 
     // Delete an event

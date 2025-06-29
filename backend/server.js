@@ -132,6 +132,35 @@ async function run() {
       res.send(result);
     })
 
+    // Login user
+    app.post('/login', async (req, res) => {
+      const { email, password } = req.body;
+
+      // check if user exists with given email
+      const user = await usersCollection.findOne({ email: email });
+      if (!user) {
+        return res.status(401).json({ message: 'Invalid email or password.' });
+      }
+
+      // compare passwords
+      const isPasswordMatched = await bcrypt.compare(password, user.password);
+      if (!isPasswordMatched) {
+        return res.status(401).json({ message: 'Invalid email or password.' });
+      }
+
+      // send success message and user info
+      res.json({
+        message: 'Login Successful',
+        user: {
+          name: user.name,
+          email: user.email,
+          photoURL: user.photoURL,
+          role: user.role
+        }
+      })
+
+    })
+
     // Send a ping to confirm a successful connection
     // await client.db("admin").command({ ping: 1 });
     console.log("Pinged your deployment. You successfully connected to MongoDB!");

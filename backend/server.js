@@ -55,14 +55,11 @@ async function run() {
 
     // Filter events
     app.get('/events/filter', async (req, res) => {
-      const { filterType } = req.query;
-      console.log(filterType);
+      const { filterType, selectedDate } = req.query;
+      console.log(filterType, selectedDate);
 
-      const dateFilter = getDateRange(filterType);
-      const query = {
-        dateTime: { $gte: `${dateFilter.$gte}`, $lte: `${dateFilter.$lte}` }
-      }
-      console.log(query);
+      const dateFilter = getDateRange(filterType, selectedDate);
+      
       const result = await eventsCollection.find({
         dateTime: {
           $gte: dateFilter.$gte,

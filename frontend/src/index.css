@@ -1,9 +1,16 @@
 @import "tailwindcss";
 @plugin "daisyui";
+@custom-variant hover (&:hover);
 
 :root {
   body {
     background-color: #111111;
     height: 100dvh;
+  }
+}
+
+@layer utilities {
+  .container {
+    @apply w-[95%] mx-auto;
   }
 }

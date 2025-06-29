@@ -28,6 +28,13 @@ async function run() {
       res.send(result);
     })
 
+    app.get('/events/search', async (req, res) => {
+      const searchTerms = req.query.title;
+      console.log(searchTerms);
+      const result = await eventsCollection.find({title: {$regex: searchTerms, $options: "i"}}).toArray();
+      res.send(result);
+    })
+
 
     // Send a ping to confirm a successful connection
     // await client.db("admin").command({ ping: 1 });

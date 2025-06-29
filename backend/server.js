@@ -28,9 +28,21 @@ async function run() {
 
     // GET recent events
     app.get('/events', async (req, res) => {
-      const result = await eventsCollection.find({}).sort({ "dateTime": -1 }).limit(3).toArray();
-      console.log(result);
-      res.send(result);
+      try {
+        const events = await eventsCollection.find({}).sort({ "dateTime": -1 }).toArray();
+        res.status(200).json({
+          success: true,
+          message: `Fetched ${events.length} recent event(s) auccessfully.`,
+          data: events
+        });
+      } catch (error) {
+        console.error('Error fetching recent events:', error);
+        res.status(500).json({
+          success: false,
+          message: "Internal server error while fetching events.",
+          error: error.message
+        })
+      }
     })
 
     // Search events
@@ -81,9 +93,9 @@ async function run() {
 
     // Get events added by user
     app.get('/my-events/:id', async (req, res) => {
-      const {id} = req.params;
+      const { id } = req.params;
 
-      const filter = {userId: id};
+      const filter = { userId: id };
 
       const result = await eventsCollection.find(filter).toArray();
 
@@ -117,10 +129,10 @@ async function run() {
 
     // Delete an event
     app.delete('/delete-event', async (req, res) => {
-      const {id} = req.query;
+      const { id } = req.query;
 
       console.log(id);
-      const filter = {_id: new ObjectId(id)};
+      const filter = { _id: new ObjectId(id) };
 
       const result = await eventsCollection.deleteOne(filter);
 

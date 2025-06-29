@@ -128,7 +128,7 @@ async function run() {
       try {
         const { title, name, dateTime, location, description } = req.body;
 
-        if(!title || !name || !dateTime || !location || !description){
+        if (!title || !name || !dateTime || !location || !description) {
           return res.status(400).json({
             success: false,
             message: "Missing input(s). Make sure input fields are not empty."
@@ -165,13 +165,33 @@ async function run() {
 
     // Get events added by user
     app.get('/my-events/:id', async (req, res) => {
-      const { id } = req.params;
+      try {
+        const { id } = req.params;
 
-      const filter = { userId: id };
+        if (!id) {
+          return res.status(400).json({
+            success: false,
+            message: 'User ID is required in URL params.'
+          });
+        }
 
-      const result = await eventsCollection.find(filter).toArray();
+        const filter = { userId: id };
 
-      res.send(result);
+        const events = await eventsCollection.find(filter).sort({ dateTime: -1 }).toArray();
+
+        res.status(200).json({
+          success: true,
+          message: `Found ${events.length} user added event(s) successfully.`,
+          data: events
+        });
+      } catch (error) {
+        // console.error('Error fetching user added events:', error);
+        res.status(500).json({
+          success: false,
+          message: "Internal server error while fetching user added events.",
+          error: error.message
+        })
+      }
     })
 
     // Update an event

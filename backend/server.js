@@ -1,11 +1,14 @@
+require('dotenv').config();
 const { MongoClient, ServerApiVersion, ObjectId } = require('mongodb');
 const express = require('express');
+const cors = require('cors');
 const bcrypt = require('bcrypt');
 const { getDateRange } = require('./utils/dateRange');
 const uri = "mongodb+srv://mongodb:learning_backend_mongodb@cluster01.d7f8blu.mongodb.net/eventManagementDB?retryWrites=true&w=majority&appName=Cluster01";
 
 const app = express();
 app.use(express.json());
+app.use(cors());
 const port = process.env.PORT || 5000;
 
 

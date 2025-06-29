@@ -1,5 +1,6 @@
 const { MongoClient, ServerApiVersion, ObjectId } = require('mongodb');
 const express = require('express');
+const bcrypt = require('bcrypt');
 const { getDateRange } = require('./utils/dateRange');
 const uri = "mongodb+srv://mongodb:learning_backend_mongodb@cluster01.d7f8blu.mongodb.net/eventManagementDB?retryWrites=true&w=majority&appName=Cluster01";
 
@@ -23,6 +24,7 @@ async function run() {
     // await client.connect();
 
     const eventsCollection = client.db("eventManagementDB").collection("events");
+    const usersCollection = client.db("eventManagementDB").collection("users");
 
     // GET recent events
     app.get('/events', async (req, res) => {
@@ -97,6 +99,34 @@ async function run() {
       const result = await eventsCollection.updateOne(filter, {
         $set: updateEvent
       }, { upsert: true });
+
+      console.log(result);
+      res.send(result);
+    })
+
+    // Signup new user
+    app.post('/register', async (req, res) => {
+      const { name, email, password, photoURL } = req.body;
+
+      // check for existing user with email
+      const existingUser = await usersCollection.findOne({ email: email });
+      if (existingUser) {
+        return res.status(409).json({ message: 'Email already registered! Please Login.' });
+      }
+
+      // hashing password using bcrypt with saltOrRounds
+      const hashedPassword = await bcrypt.hash(password, 10);
+
+      const newUser = {
+        name,
+        email,
+        password: hashedPassword,
+        photoURL,
+        role: 'user',
+        createdAt: new Date()
+      };
+
+      const result = await usersCollection.insertOne(newUser);
 
       console.log(result);
       res.send(result);

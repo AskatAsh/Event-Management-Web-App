@@ -32,11 +32,11 @@ async function run() {
         const events = await eventsCollection.find({}).sort({ "dateTime": -1 }).toArray();
         res.status(200).json({
           success: true,
-          message: `Fetched ${events.length} recent event(s) auccessfully.`,
+          message: `Fetched ${events.length} recent event(s) successfully.`,
           data: events
         });
       } catch (error) {
-        console.error('Error fetching recent events:', error);
+        // console.error('Error fetching recent events:', error);
         res.status(500).json({
           success: false,
           message: "Internal server error while fetching events.",
@@ -55,18 +55,47 @@ async function run() {
 
     // Filter events
     app.get('/events/filter', async (req, res) => {
-      const { filterType, selectedDate } = req.query;
-      console.log(filterType, selectedDate);
+      try {
+        const { filterType, selectedDate } = req.query;
+        console.log(filterType, selectedDate);
 
-      const dateFilter = getDateRange(filterType, selectedDate);
-      
-      const result = await eventsCollection.find({
-        dateTime: {
-          $gte: dateFilter.$gte,
-          $lte: dateFilter.$lte
+        if (!filterType) {
+          return res.status(400).send({ message: 'Missing filterType' });
         }
-      }).sort({ dateTime: -1 }).toArray();
-      res.send(result);
+
+        if (selectedDate && isNaN(Date.parse(selectedDate))) {
+          return res.status(400).json({
+            success: false,
+            message: 'Invalid selectedDate format. Use ISO format (YYYY-MM-DD).'
+          });
+        }
+
+        const dateFilter = getDateRange(!selectedDate ? 'today' : filterType, selectedDate);
+
+        if (!dateFilter) {
+          return res.status(400).send({ message: 'Invalid filter type or missing date' });
+        }
+
+        const events = await eventsCollection.find({
+          dateTime: {
+            $gte: dateFilter.$gte,
+            $lte: dateFilter.$lte
+          }
+        }).sort({ dateTime: -1 }).toArray();
+
+        res.send({
+          success: true,
+          message: `Fetched ${events.length} filtered event(s) successfully.`,
+          data: events
+        });
+      } catch (error) {
+        // console.error('Error fetching filtered events:', error);
+        res.status(500).json({
+          success: false,
+          message: "Internal server error while fetching filtered events.",
+          error: error.message
+        })
+      }
     })
 
     // Add an event

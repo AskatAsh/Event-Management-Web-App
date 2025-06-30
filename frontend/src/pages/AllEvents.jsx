@@ -96,7 +96,6 @@ const AllEvents = () => {
 
   // Reset filters
   const handleReset = () => {
-    setSearchTitle("");
     setDateTime("");
     setDateRange("recent");
     fetchAllEvents();
@@ -187,7 +186,7 @@ const AllEvents = () => {
           onClick={handleReset}
           disabled={loading}
         >
-          Reset
+          Clear Filter ❌
         </button>
       </form>
 

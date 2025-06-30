@@ -2,9 +2,11 @@ import { useState } from "react";
 import { FaRegEye, FaRegEyeSlash } from "react-icons/fa6";
 import { Link } from "react-router";
 import { Bounce, toast } from "react-toastify";
+import useAuth from "../hooks/useAuth";
 
 const Login = () => {
   const [showPassword, setShowPassword] = useState(false);
+  const { setUser } = useAuth();
 
   const handleShowPassword = () => {
     setShowPassword(!showPassword);
@@ -47,6 +49,7 @@ const Login = () => {
       });
 
       localStorage.setItem("user", JSON.stringify(result?.user));
+      setUser(result?.user);
     }
 
     console.log(result);

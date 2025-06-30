@@ -1,14 +1,16 @@
 import { FaUserCircle } from "react-icons/fa";
-import { Link, NavLink } from "react-router";
+import { Link, NavLink, useNavigate } from "react-router";
 import { logo } from "../../constants";
 import useAuth from "../../hooks/useAuth";
 
 const Header = () => {
   const { user, setUser } = useAuth();
+  const navigate = useNavigate();
 
   const handleLogOut = () => {
-    setUser({});
     localStorage.removeItem("user");
+    setUser(null);
+    navigate("/login");
   };
 
   const navLinks = (

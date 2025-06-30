@@ -4,6 +4,7 @@ import AddEvent from "../pages/AddEvent";
 import AllEvents from "../pages/AllEvents";
 import Home from "../pages/Home";
 import Login from "../pages/Login";
+import MyEvents from "../pages/MyEvents";
 import Register from "../pages/Register";
 import PrivateRoute from "./PrivateRoute";
 
@@ -30,6 +31,14 @@ const router = createBrowserRouter([
         element: (
           <PrivateRoute>
             <AddEvent />
+          </PrivateRoute>
+        ),
+      },
+      {
+        path: "/my-events",
+        element: (
+          <PrivateRoute>
+            <MyEvents />
           </PrivateRoute>
         ),
       },

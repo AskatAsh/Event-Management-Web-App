@@ -1,5 +1,6 @@
 // import { useLoaderData } from "react-router";
 import { useEffect, useState } from "react";
+import { Bounce, toast } from "react-toastify";
 import useAuth from "../hooks/useAuth";
 import Loading from "./../components/shared/Loading";
 
@@ -8,8 +9,8 @@ const AllEvents = () => {
   const [events, setEvents] = useState([]);
   const [loading, setLoading] = useState(true);
   const { user } = useAuth();
-  console.log(user);
 
+  // get all events
   useEffect(() => {
     async function fetchEvents() {
       const eventsData = await fetch("http://localhost:10000/events").then(
@@ -20,6 +21,43 @@ const AllEvents = () => {
     }
     fetchEvents();
   }, []);
+
+  // Join event handler using eventid and userid
+  const joinEventHandler = async (eventId) => {
+    if (!user?.id) return;
+
+    const res = await fetch(
+      `${import.meta.env.VITE_SERVER}/join-event/${eventId}`,
+      {
+        method: "PUT",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({ userId: user?.id }),
+      }
+    );
+
+    const data = await res.json();
+
+    if (data.success) {
+      // Update attendeeCount in the events state
+      setEvents((prev) => ({
+        ...prev,
+        data: prev.data.map((event) =>
+          event._id === eventId
+            ? { ...event, attendeeCount: event.attendeeCount + 1 }
+            : event
+        ),
+      }));
+    } else {
+      toast.warning(data.message || "You have already joined this event.", {
+        position: "top-right",
+        autoClose: 1500,
+        transition: Bounce,
+        theme: "dark",
+      });
+    }
+  };
 
   return (
     <div>
@@ -56,7 +94,17 @@ const AllEvents = () => {
                     Attendee Count: {event?.attendeeCount}
                   </p>
                   <div className="card-actions justify-end">
-                    <button className="btn btn-warning">Join Now</button>
+                    {event?.joinedUsers.includes(user?.id) ||
+                    event?.attendeeCount ? (
+                      <button className="btn btn-outline">✔ Joined</button>
+                    ) : (
+                      <button
+                        className="btn btn-warning"
+                        onClick={() => joinEventHandler(event?._id)}
+                      >
+                        Join Now
+                      </button>
+                    )}
                   </div>
                 </div>
               </div>

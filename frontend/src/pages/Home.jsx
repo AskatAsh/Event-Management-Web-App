@@ -1,3 +1,4 @@
+import Services from "../components/sections/Services/Services";
 import Slider from "../components/sections/Slider/Slider";
 
 const Home = () => {
@@ -5,6 +6,7 @@ const Home = () => {
     <>
       <title>EventZ | Home</title>
       <Slider />
+      <Services />
     </>
   );
 };

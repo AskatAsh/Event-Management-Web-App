@@ -467,6 +467,6 @@ app.get("/", (req, res) => {
   res.send("Event Management Server is Running...");
 });
 
-// app.listen(port, () => {
-//   console.log("Server is Running on port: ", port);
-// });
+app.listen(port, () => {
+  console.log("Server is Running on port: ", port);
+});

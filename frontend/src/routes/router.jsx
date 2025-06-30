@@ -2,11 +2,13 @@ import { createBrowserRouter } from "react-router";
 import MainLayout from "../layouts/MainLayout";
 import AddEvent from "../pages/AddEvent";
 import AllEvents from "../pages/AllEvents";
+import ContactUs from "../pages/ContactUs";
 import Home from "../pages/Home";
 import Login from "../pages/Login";
 import MyEvents from "../pages/MyEvents";
 import Register from "../pages/Register";
 import UpdateEvent from "../pages/UpdateEvent";
+import AboutUs from "./../pages/AboutUs";
 import PrivateRoute from "./PrivateRoute";
 
 const router = createBrowserRouter([
@@ -18,6 +20,14 @@ const router = createBrowserRouter([
         path: "/",
         Component: Home,
         index: true,
+      },
+      {
+        path: "/contactUs",
+        Component: ContactUs,
+      },
+      {
+        path: "/aboutUs",
+        Component: AboutUs,
       },
       {
         path: "/events",

@@ -99,7 +99,8 @@ async function run() {
           });
         }
 
-        const dateFilter = getDateRange(!selectedDate ? 'today' : filterType, selectedDate);
+        const dateFilter = getDateRange(filterType, selectedDate);
+        console.log(dateFilter);
 
         if (!dateFilter) {
           return res.status(400).send({ message: 'Invalid filter type or missing date' });

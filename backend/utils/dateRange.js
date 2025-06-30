@@ -30,7 +30,7 @@ function getDateRange(type, customDateStr) {
 
         case "this_week":
             return {
-                $gte: startOfWeek(now, { weekStartsOn: 0 }), // Sunday
+                $gte: startOfWeek(now, { weekStartsOn: 0 }),
                 $lte: endOfWeek(now, { weekStartsOn: 0 })
             };
 

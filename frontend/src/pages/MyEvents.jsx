@@ -1,5 +1,6 @@
 // import { useLoaderData } from "react-router";
 import { useEffect, useState } from "react";
+import { Link } from "react-router";
 import useAuth from "../hooks/useAuth";
 import Loading from "./../components/shared/Loading";
 
@@ -53,7 +54,13 @@ const MyEvents = () => {
                   {event?.description}
                 </p>
                 <div className="card-actions justify-end">
-                  <button className="btn btn-warning">Update</button>
+                  <Link
+                    to={`/update-Event/${event._id}`}
+                    state={event}
+                    className="btn btn-warning"
+                  >
+                    Update
+                  </Link>
                   <button className="btn btn-error">Delete</button>
                 </div>
               </div>

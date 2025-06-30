@@ -1,51 +1,79 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { useForm } from "react-hook-form";
+import { useLocation } from "react-router";
 import Swal from "sweetalert2";
 
-const AddEvent = () => {
+const UpdateEvent = () => {
+  const { state } = useLocation();
+
   const {
     register,
     handleSubmit,
     reset,
     formState: { errors },
-  } = useForm();
+  } = useForm({
+    defaultValues: {
+      title: state?.title || "",
+      name: state?.name || "",
+      dateTime: state?.dateTime ? state.dateTime.slice(0, 16) : "",
+      location: state?.location || "",
+      description: state?.description || "",
+      attendeeCount: state?.attendeeCount || 0,
+    },
+  });
+
   const [loading, setLoading] = useState(false);
+
+  useEffect(() => {
+    if (state) {
+      reset({
+        title: state.title || "",
+        name: state.name || "",
+        dateTime: state.dateTime ? state.dateTime.slice(0, 16) : "",
+        location: state.location || "",
+        description: state.description || "",
+        attendeeCount: state.attendeeCount || 0,
+      });
+    }
+  }, [state, reset]);
 
   const onSubmit = async (data) => {
     const eventData = {
       ...data,
       attendeeCount: Number(data.attendeeCount || 0),
     };
-    console.log(eventData);
 
     try {
       setLoading(true);
-      const res = await fetch(`${import.meta.env.VITE_SERVER}/add-event`, {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify(eventData),
-      });
+      const res = await fetch(
+        `${import.meta.env.VITE_SERVER}/update-event/${state._id}`,
+        {
+          method: "PUT",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify(eventData),
+        }
+      );
 
       const result = await res.json();
       setLoading(false);
 
       if (result.success) {
-        Swal.fire("Success!", "Event added successfully!", "success");
+        Swal.fire("Success!", "Event updated successfully!", "success");
         reset();
       } else {
         Swal.fire("Error!", result.message || "Something went wrong", "error");
       }
     } catch (error) {
       setLoading(false);
-      Swal.fire("Error!", error.message || "Failed to add event", "error");
+      Swal.fire("Error!", error.message || "Failed to update event", "error");
     }
   };
 
   return (
     <div className="max-w-xl mx-auto p-6 bg-base-200 rounded-2xl shadow-lg mt-10">
-      <h2 className="text-2xl font-bold mb-6 text-center">Add New Event</h2>
+      <h2 className="text-2xl font-bold mb-6 text-center">Update Event</h2>
       <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
         {/* Event Title */}
         <div>
@@ -89,8 +117,8 @@ const AddEvent = () => {
             className="input input-bordered focus:outline-none w-full"
             {...register("dateTime", { required: "Date and time is required" })}
           />
-          {errors.datetime && (
-            <p className="text-red-500 text-sm">{errors.datetime.message}</p>
+          {errors.dateTime && (
+            <p className="text-red-500 text-sm">{errors.dateTime.message}</p>
           )}
         </div>
 
@@ -148,7 +176,7 @@ const AddEvent = () => {
             className="btn btn-warning w-full"
             disabled={loading}
           >
-            {loading ? "Adding..." : "Add Event"}
+            {loading ? "Updating..." : "Update Event"}
           </button>
         </div>
       </form>
@@ -156,4 +184,4 @@ const AddEvent = () => {
   );
 };
 
-export default AddEvent;
+export default UpdateEvent;

@@ -130,9 +130,9 @@ async function run() {
     // Add an event
     app.post('/add-event', async (req, res) => {
       try {
-        const { title, name, dateTime, location, description } = req.body;
+        const { title, name, dateTime, location, description, userId } = req.body;
 
-        if (!title || !name || !dateTime || !location || !description) {
+        if (!title || !name || !dateTime || !location || !description || !userId) {
           return res.status(400).json({
             success: false,
             message: "Missing input(s). Make sure input fields are not empty."
@@ -146,6 +146,7 @@ async function run() {
           location,
           description,
           attendeeCount: 0,
+          userId,
           joinedUsers: [],
           createdAt: new Date()
         };

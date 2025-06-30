@@ -1,15 +1,13 @@
-// import { useLoaderData } from "react-router";
 import { useEffect, useState } from "react";
 import { Link } from "react-router";
+import Swal from "sweetalert2";
 import useAuth from "../hooks/useAuth";
 import Loading from "./../components/shared/Loading";
 
 const MyEvents = () => {
-  // const { events } = useLoaderData();
   const [events, setEvents] = useState([]);
   const [loading, setLoading] = useState(true);
   const { user } = useAuth();
-  console.log(user);
 
   useEffect(() => {
     async function fetchEvents() {
@@ -21,6 +19,35 @@ const MyEvents = () => {
     }
     fetchEvents();
   }, [user]);
+
+  // handle delete event
+  const handleDelete = async (eventId) => {
+    const result = await Swal.fire({
+      title: "Are you sure?",
+      text: "You won't be able to revert this!",
+      icon: "warning",
+      showCancelButton: true,
+      confirmButtonColor: "#d33",
+      cancelButtonColor: "#3085d6",
+      confirmButtonText: "Yes, delete it!",
+    });
+
+    if (result.isConfirmed) {
+      const res = await fetch(
+        `${import.meta.env.VITE_SERVER}/delete-event/${eventId}`,
+        { method: "DELETE" }
+      );
+      if (res.ok) {
+        setEvents((prev) => ({
+          ...prev,
+          data: prev.data.filter((event) => event._id !== eventId),
+        }));
+        Swal.fire("Deleted!", "Your event has been deleted.", "success");
+      } else {
+        Swal.fire("Error!", "Failed to delete the event.", "error");
+      }
+    }
+  };
 
   return (
     <div>
@@ -61,7 +88,12 @@ const MyEvents = () => {
                   >
                     Update
                   </Link>
-                  <button className="btn btn-error">Delete</button>
+                  <button
+                    className="btn btn-error"
+                    onClick={() => handleDelete(event._id)}
+                  >
+                    Delete
+                  </button>
                 </div>
               </div>
             </div>

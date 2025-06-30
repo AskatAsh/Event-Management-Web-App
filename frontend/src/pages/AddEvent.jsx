@@ -1,8 +1,10 @@
 import { useState } from "react";
 import { useForm } from "react-hook-form";
 import Swal from "sweetalert2";
+import useAuth from "../hooks/useAuth";
 
 const AddEvent = () => {
+  const { user } = useAuth();
   const {
     register,
     handleSubmit,
@@ -15,6 +17,7 @@ const AddEvent = () => {
     const eventData = {
       ...data,
       attendeeCount: Number(data.attendeeCount || 0),
+      userId: user?.id,
     };
     console.log(eventData);
 

@@ -1,4 +1,5 @@
 import { Outlet } from "react-router";
+import { ToastContainer } from "react-toastify";
 import Header from "../components/shared/Header";
 
 const MainLayout = () => {
@@ -6,11 +7,10 @@ const MainLayout = () => {
     <>
       <Header />
       <div className="container">
-        <h1 className="text-5xl text-amber-400">
-          Welcome to Event Management App
-        </h1>
         <Outlet />
       </div>
+
+      <ToastContainer />
     </>
   );
 };

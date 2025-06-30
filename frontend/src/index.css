@@ -6,4 +6,7 @@
   .container {
     @apply w-[95%] mx-auto;
   }
+  .input_styles {
+    @apply focus:outline-none w-full bg-gray-900 h-12;
+  }
 }

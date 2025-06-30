@@ -80,7 +80,7 @@ const Header = () => {
             )}
           </ul>
         </div>
-        <Link to={"/"} className="text-2xl logo flex items-center">
+        <Link to={"/"} className="text-2xl font-satisfy flex items-center">
           <img className="w-10" src={logo} alt="eventz logo" />
           EventZ
         </Link>

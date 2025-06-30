@@ -1,5 +1,5 @@
-import { GiGlassCelebration } from "react-icons/gi";
 import { Link } from "react-router";
+import { logo } from "../../constants";
 
 const Footer = () => {
   return (
@@ -198,10 +198,10 @@ const Footer = () => {
         <hr className="mt-16 mb-10 border-gray-800" />
 
         <div className="flex flex-col md:flex-row items-center justify-between gap-10">
-          <a className="btn btn-ghost text-2xl logo">
-            <GiGlassCelebration className="text-5xl text-yellow-400" />
+          <Link to={"/"} className="text-2xl font-satisfy flex items-center">
+            <img className="w-10" src={logo} alt="eventz logo" />
             EventZ
-          </a>
+          </Link>
 
           <ul className="flex items-center space-x-3 md:order-3">
             <li>

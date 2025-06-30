@@ -1,10 +1,9 @@
-import { useContext } from "react";
 import { useLoaderData } from "react-router";
-import { AuthContext } from "../contexts/AuthProvider";
+import useAuth from "../hooks/useAuth";
 
 const AllEvents = () => {
   const { events } = useLoaderData();
-  const { user } = useContext(AuthContext);
+  const { user } = useAuth();
   console.log(user);
 
   return (

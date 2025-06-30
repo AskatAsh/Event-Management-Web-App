@@ -1,8 +1,10 @@
+import Slider from "../components/sections/Slider/Slider";
+
 const Home = () => {
   return (
     <>
       <title>EventZ | Home</title>
-      <div className="mt-10 font-bold">Home page</div>
+      <Slider />
     </>
   );
 };

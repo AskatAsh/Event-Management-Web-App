@@ -21,7 +21,6 @@ const Register = () => {
     const photoURL = e.target.photoUrl.value;
 
     const userInfo = { name, email, password, photoURL };
-    console.log(userInfo);
 
     setErrorMessage("");
     setSuccess("");
@@ -67,8 +66,6 @@ const Register = () => {
       e.target.reset();
       navigate("/login");
     }
-
-    console.log(result);
   };
 
   return (

@@ -19,7 +19,6 @@ const AddEvent = () => {
       attendeeCount: Number(data.attendeeCount || 0),
       userId: user?.id,
     };
-    console.log(eventData);
 
     try {
       setLoading(true);

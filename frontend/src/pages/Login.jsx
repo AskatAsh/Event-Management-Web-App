@@ -18,7 +18,6 @@ const Login = () => {
     const password = e.target.password.value;
 
     const userInfo = { email, password };
-    console.log(userInfo);
 
     // login user
     const result = await fetch(
@@ -52,8 +51,6 @@ const Login = () => {
       setUser(result?.user);
       e.target.reset();
     }
-
-    console.log(result);
   };
   return (
     <div>

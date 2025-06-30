@@ -86,7 +86,6 @@ async function run() {
     app.get('/events/filter', async (req, res) => {
       try {
         const { filterType, selectedDate } = req.query;
-        console.log(filterType, selectedDate);
 
         if (!filterType) {
           return res.status(400).send({ message: 'Missing filterType' });
@@ -100,7 +99,6 @@ async function run() {
         }
 
         const dateFilter = getDateRange(filterType, selectedDate);
-        console.log(dateFilter);
 
         if (!dateFilter) {
           return res.status(400).send({ message: 'Invalid filter type or missing date' });

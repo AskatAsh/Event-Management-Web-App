@@ -1,5 +1,6 @@
 import { createBrowserRouter } from "react-router";
 import MainLayout from "../layouts/MainLayout";
+import AddEvent from "../pages/AddEvent";
 import AllEvents from "../pages/AllEvents";
 import Home from "../pages/Home";
 import Login from "../pages/Login";
@@ -21,6 +22,14 @@ const router = createBrowserRouter([
         element: (
           <PrivateRoute>
             <AllEvents />
+          </PrivateRoute>
+        ),
+      },
+      {
+        path: "/add-event",
+        element: (
+          <PrivateRoute>
+            <AddEvent />
           </PrivateRoute>
         ),
       },

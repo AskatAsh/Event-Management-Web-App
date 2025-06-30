@@ -30,7 +30,7 @@ const Header = () => {
             <NavLink to="/events">All Events</NavLink>
           </li>
           <li>
-            <NavLink to="/add-events">Add Events</NavLink>
+            <NavLink to="/add-event">Add Event</NavLink>
           </li>
           <li>
             <NavLink to="/my-events">Add Events</NavLink>

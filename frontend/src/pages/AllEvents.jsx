@@ -1,44 +1,69 @@
-import { useLoaderData } from "react-router";
+// import { useLoaderData } from "react-router";
+import { useEffect, useState } from "react";
 import useAuth from "../hooks/useAuth";
+import Loading from "./../components/shared/Loading";
 
 const AllEvents = () => {
-  const { events } = useLoaderData();
+  // const { events } = useLoaderData();
+  const [events, setEvents] = useState([]);
+  const [loading, setLoading] = useState(true);
   const { user } = useAuth();
   console.log(user);
+
+  useEffect(() => {
+    async function fetchEvents() {
+      const eventsData = await fetch("http://localhost:10000/events").then(
+        (res) => res.json()
+      );
+      setEvents(eventsData);
+      setLoading(false);
+    }
+    fetchEvents();
+  }, []);
 
   return (
     <div>
       <title>EventZ | All Events</title>
-      <section className="grid sm:grid-cols-2 md:grid-cols-3 xl:grid-cols-4 gap-5">
-        {events.data.map((event, idx) => (
-          <div
-            key={event._id}
-            className="card shadow-md bg-base-300 text-primary-content"
-          >
-            <div className="card-body">
-              <h2 className="card-title text-white">
-                <span>#{idx + 1}.</span> {event?.title}
-              </h2>
-              <ul className="flex flex-col text-gray-400">
-                <li>
-                  Posted by: <strong>{event?.name}</strong>
-                </li>
-                <li>Event Date: {new Date(event?.dateTime).toDateString()}</li>
-                <li>Location: {event?.location}</li>
-              </ul>
-              <p className="line-clamp-2 text-gray-300">{event?.description}</p>
-              <div className="flex items-center">
-                <p className="text-gray-400">
-                  Attendee Count: {event?.attendeeCount}
+      {loading ? (
+        <div className="mt-20">
+          <Loading />
+        </div>
+      ) : (
+        <section className="grid sm:grid-cols-2 md:grid-cols-3 xl:grid-cols-4 gap-5">
+          {events.data.map((event, idx) => (
+            <div
+              key={event._id}
+              className="card shadow-md bg-base-300 text-primary-content"
+            >
+              <div className="card-body">
+                <h2 className="card-title text-white">
+                  <span>#{idx + 1}.</span> {event?.title}
+                </h2>
+                <ul className="flex flex-col text-gray-400">
+                  <li>
+                    Posted by: <strong>{event?.name}</strong>
+                  </li>
+                  <li>
+                    Event Date: {new Date(event?.dateTime).toDateString()}
+                  </li>
+                  <li>Location: {event?.location}</li>
+                </ul>
+                <p className="line-clamp-2 text-gray-300">
+                  {event?.description}
                 </p>
-                <div className="card-actions justify-end">
-                  <button className="btn btn-warning">Join Now</button>
+                <div className="flex items-center">
+                  <p className="text-gray-400">
+                    Attendee Count: {event?.attendeeCount}
+                  </p>
+                  <div className="card-actions justify-end">
+                    <button className="btn btn-warning">Join Now</button>
+                  </div>
                 </div>
               </div>
             </div>
-          </div>
-        ))}
-      </section>
+          ))}
+        </section>
+      )}
     </div>
   );
 };

@@ -18,13 +18,11 @@ const router = createBrowserRouter([
       },
       {
         path: "/events",
-        element: <PrivateRoute Component={AllEvents} />,
-        loader: async () => {
-          const events = await fetch(
-            "https://event-management-backend-cw35.onrender.com/events"
-          ).then((res) => res.json());
-          return { events };
-        },
+        element: (
+          <PrivateRoute>
+            <AllEvents />
+          </PrivateRoute>
+        ),
       },
       {
         path: "/register",

@@ -1,11 +1,8 @@
+import { Navigate } from "react-router";
 import useAuth from "../hooks/useAuth";
 
 const PrivateRoute = ({ children }) => {
-  const { user, loading } = useAuth();
-
-  if (loading) {
-    return <span className="loading loading-dots loading-lg"></span>;
-  }
+  const { user } = useAuth();
 
   if (user && user?.email) {
     return children;

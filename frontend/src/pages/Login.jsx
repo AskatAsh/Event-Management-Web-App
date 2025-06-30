@@ -50,6 +50,7 @@ const Login = () => {
 
       localStorage.setItem("user", JSON.stringify(result?.user));
       setUser(result?.user);
+      e.target.reset();
     }
 
     console.log(result);

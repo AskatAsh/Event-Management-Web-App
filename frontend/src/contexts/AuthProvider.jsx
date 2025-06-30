@@ -13,13 +13,9 @@ const AuthProvider = ({ children }) => {
     }
   });
 
-  const [loading, setLoading] = useState(true);
-
   const authInfo = {
     user,
     setUser,
-    loading,
-    setLoading,
   };
 
   return (

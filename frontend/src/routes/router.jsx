@@ -4,6 +4,7 @@ import AllEvents from "../pages/AllEvents";
 import Home from "../pages/Home";
 import Login from "../pages/Login";
 import Register from "../pages/Register";
+import PrivateRoute from "./PrivateRoute";
 
 const router = createBrowserRouter([
   {
@@ -17,7 +18,7 @@ const router = createBrowserRouter([
       },
       {
         path: "/events",
-        Component: AllEvents,
+        element: <PrivateRoute Component={AllEvents} />,
         loader: async () => {
           const events = await fetch(
             "https://event-management-backend-cw35.onrender.com/events"

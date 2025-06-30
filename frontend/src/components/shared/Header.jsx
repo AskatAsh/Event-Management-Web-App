@@ -95,7 +95,7 @@ const Header = () => {
               <div className="flex items-center" tabIndex={0}>
                 {user.photoURL ? (
                   <div className="w-[40px] rounded-full overflow-hidden mr-1">
-                    <img src={user.photoURL} alt={<FaUserCircle />} />
+                    <img src={user?.photoURL} alt={"👤 user profile"} />
                   </div>
                 ) : (
                   <FaUserCircle className="text-3xl mr-2"></FaUserCircle>

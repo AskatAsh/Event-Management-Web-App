@@ -64,6 +64,7 @@ const Register = () => {
         transition: Bounce,
         theme: "dark",
       });
+      e.target.reset();
       navigate("/login");
     }
 

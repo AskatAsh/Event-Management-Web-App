@@ -354,10 +354,10 @@ async function run() {
       try {
         const { name, email, password, photoURL } = req.body;
 
-        if (!name || !email || !password || !photoURL) {
+        if (!name || !email || !password) {
           return res.status(400).json({
             success: false,
-            message: 'All fields (name, email, password, photoURL) are required.'
+            message: 'All fields (name, email, password) are required.'
           });
         }
 
@@ -377,7 +377,7 @@ async function run() {
           name,
           email,
           password: hashedPassword,
-          photoURL,
+          photoURL: photoURL || "",
           role: 'user',
           createdAt: new Date()
         };

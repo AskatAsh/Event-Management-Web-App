@@ -1,12 +1,14 @@
 import { useState } from "react";
 import { FaRegEye, FaRegEyeSlash } from "react-icons/fa6";
-import { Link } from "react-router";
+import { Link, useNavigate } from "react-router";
 import { Bounce, toast } from "react-toastify";
 import useAuth from "../hooks/useAuth";
 
 const Login = () => {
   const [showPassword, setShowPassword] = useState(false);
+  const [loading, setLoading] = useState(false);
   const { setUser } = useAuth();
+  const navigate = useNavigate();
 
   const handleShowPassword = () => {
     setShowPassword(!showPassword);
@@ -19,17 +21,16 @@ const Login = () => {
 
     const userInfo = { email, password };
 
+    setLoading(true);
+
     // login user
-    const result = await fetch(
-      "https://event-management-backend-cw35.onrender.com/login",
-      {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify(userInfo),
-      }
-    ).then((res) => res.json());
+    const result = await fetch(`${import.meta.env.VITE_SERVER}/login`, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify(userInfo),
+    }).then((res) => res.json());
 
     // login error and success message
     if (!result?.success) {
@@ -39,6 +40,7 @@ const Login = () => {
         transition: Bounce,
         theme: "dark",
       });
+      setLoading(false);
     } else {
       toast.success(result?.message || "User Logged in successfully.", {
         position: "top-right",
@@ -47,15 +49,17 @@ const Login = () => {
         theme: "dark",
       });
 
+      setLoading(false);
       localStorage.setItem("user", JSON.stringify(result?.user));
       setUser(result?.user);
       e.target.reset();
+      navigate("/");
     }
   };
   return (
     <div>
       <title>EventZ | Register</title>
-      <div className="hero py-14">
+      <div className="hero">
         <div className="hero-content flex-col max-w-md w-full">
           <div className="text-center flex flex-col gap-3">
             <h1 className="text-5xl font-bold">Welcome Back!</h1>
@@ -105,8 +109,19 @@ const Login = () => {
                 </div>
               </fieldset>
               <div className="form-control mt-4">
-                <button className="btn btn-warning opacity-90 text-black w-full">
-                  Login
+                <button
+                  className={`btn opacity-90 text-black w-full ${
+                    loading ? "btn-disabled" : "btn-warning"
+                  }`}
+                >
+                  {loading ? (
+                    <span>
+                      Logging..{" "}
+                      <span className="loading loading-spinner loading-xs"></span>
+                    </span>
+                  ) : (
+                    "Login"
+                  )}
                 </button>
               </div>
               <p className="text-xs py-2 text-center">

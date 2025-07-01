@@ -7,6 +7,7 @@ const Register = () => {
   const [errorMessage, setErrorMessage] = useState("");
   const [success, setSuccess] = useState("");
   const [showPassword, setShowPassword] = useState(false);
+  const [loading, setLoading] = useState(false);
   const navigate = useNavigate();
 
   const handleShowPassword = () => {
@@ -21,6 +22,7 @@ const Register = () => {
     const photoURL = e.target.photoUrl.value;
 
     const userInfo = { name, email, password, photoURL };
+    console.log(userInfo);
 
     setErrorMessage("");
     setSuccess("");
@@ -36,17 +38,16 @@ const Register = () => {
       return;
     }
 
+    setLoading(true);
+
     // register user
-    const result = await fetch(
-      "https://event-management-backend-cw35.onrender.com/register",
-      {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify(userInfo),
-      }
-    ).then((res) => res.json());
+    const result = await fetch(`${import.meta.env.VITE_SERVER}/register`, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify(userInfo),
+    }).then((res) => res.json());
 
     // registration error and success message
     if (!result?.success) {
@@ -56,6 +57,7 @@ const Register = () => {
         transition: Bounce,
         theme: "dark",
       });
+      setLoading(false);
     } else {
       toast.success(result?.message || "User registered successfully.", {
         position: "top-right",
@@ -63,6 +65,7 @@ const Register = () => {
         transition: Bounce,
         theme: "dark",
       });
+      setLoading(false);
       e.target.reset();
       navigate("/login");
     }
@@ -71,7 +74,7 @@ const Register = () => {
   return (
     <div>
       <title>EventZ | Register</title>
-      <div className="hero py-14">
+      <div className="hero">
         <div className="hero-content flex-col max-w-md w-full">
           <div className="text-center flex flex-col gap-3">
             <h1 className="text-5xl font-bold">Register now!</h1>
@@ -107,7 +110,7 @@ const Register = () => {
               </fieldset>
               <fieldset className="fieldset">
                 <label className="label" htmlFor="photoUrl">
-                  <span className="label-text">Email</span>
+                  <span className="label-text">Photo URL</span>
                 </label>
                 <input
                   id="photoUrl"
@@ -115,7 +118,6 @@ const Register = () => {
                   name="photoUrl"
                   placeholder="Photo URL"
                   className="input input-bordered input_styles"
-                  required
                 />
               </fieldset>
               <fieldset className="fieldset">
@@ -152,8 +154,19 @@ const Register = () => {
                 )}
               </div>
               <div className="form-control mt-4">
-                <button className="btn btn-warning opacity-90 text-black w-full">
-                  Register
+                <button
+                  className={`btn opacity-90 text-black w-full ${
+                    loading ? "btn-disabled" : "btn-warning"
+                  }`}
+                >
+                  {loading ? (
+                    <span>
+                      Registering..{" "}
+                      <span className="loading loading-spinner loading-xs"></span>
+                    </span>
+                  ) : (
+                    "Register"
+                  )}
                 </button>
               </div>
               <p className="text-xs py-2 text-center">

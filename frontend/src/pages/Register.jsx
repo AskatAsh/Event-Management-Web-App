@@ -84,7 +84,7 @@ const Register = () => {
             <form className="card-body" onSubmit={handleRegister}>
               <fieldset className="fieldset">
                 <label className="label" htmlFor="name">
-                  <span className="label-text">Username</span>
+                  <span className="label-text">Username*</span>
                 </label>
                 <input
                   id="name"
@@ -97,7 +97,7 @@ const Register = () => {
               </fieldset>
               <fieldset className="fieldset">
                 <label className="label" htmlFor="email">
-                  <span className="label-text">Email</span>
+                  <span className="label-text">Email*</span>
                 </label>
                 <input
                   id="email"
@@ -122,7 +122,7 @@ const Register = () => {
               </fieldset>
               <fieldset className="fieldset">
                 <label className="label" htmlFor="password">
-                  <span className="label-text">Password</span>
+                  <span className="label-text">Password*</span>
                 </label>
 
                 <div className="relative flex items-center">
